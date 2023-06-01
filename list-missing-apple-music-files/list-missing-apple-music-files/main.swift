@@ -39,7 +39,9 @@ if CommandLine.arguments.count == 0
     }
     catch let error as NSError
     {
-        print(error.description, error.localizedDescription)
+        print(error.code)
+        print(error.description)
+        print(error.localizedDescription)
     }
 }
 else
