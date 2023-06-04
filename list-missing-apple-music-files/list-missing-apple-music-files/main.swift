@@ -8,9 +8,7 @@
 import Foundation
 import iTunesLibrary
 
-CommandLine.arguments.removeFirst()
-
-if CommandLine.arguments.count == 0
+if CommandLine.arguments.count == 1
 {
     do
     {
@@ -46,10 +44,33 @@ if CommandLine.arguments.count == 0
 }
 else
 {
-    for argument in CommandLine.arguments
-    {
-        print(argument)
-    }
+    let path = CommandLine.arguments[1]
     
-    // here I am going to assume that the argument will be the path to an Apple Music exported XML file
+    let music = NSDictionary(contentsOfFile: path)
+    let tracks: NSDictionary = music?.value(forKey: "Tracks") as! NSDictionary
+    
+    for (_, value) in tracks
+    {
+        let track : NSDictionary = value as! NSDictionary
+        
+        let title = track.value(forKey: "Name")
+        let artist = track.value(forKey: "Artist")
+        let album = track.value(forKey: "Album")
+        
+        let location = track.value(forKey: "Location")
+        
+        if location == nil
+        {
+            print(title ?? "", artist ?? "", album ?? "", separator: " - ")
+        }
+        else
+        {
+            let url: URL = URL.init(string: location as! String) ?? URL.init(string: "")!
+            
+            if !FileManager.default.fileExists(atPath: url.path)
+            {
+                print(title ?? "", artist ?? "", album ?? "", url.path, separator: " - ")
+            }
+        }
+    }
 }
